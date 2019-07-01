@@ -24,7 +24,7 @@
 
 The brief was to build a full-stack application with a React front-end and noSQL database. The application had to include data schema and a RESTful api framework.
 
-The application is deployed via Git on Heroku and can be found here: Cabin Fever (https://cabin-fever.herokuapp.com/#/).
+The application is deployed via Git on Heroku and can be found here: [Cabin Fever](https://cabin-fever.herokuapp.com).
 
 
 
