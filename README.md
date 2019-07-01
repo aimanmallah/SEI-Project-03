@@ -50,3 +50,7 @@ The delivery of the cabins was incredibly fun because the data from the API was 
 
 ![image](https://user-images.githubusercontent.com/47919053/60429253-9d99bd00-9bf2-11e9-9dc7-0a1cdfb040c3.png)
 
+
+### Future enhancements
+* Upgrading the API to allow searches by size, location, price.
+* Adding failed search notifications.
