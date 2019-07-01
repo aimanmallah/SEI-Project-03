@@ -27,18 +27,22 @@ The brief was to build a full-stack application with a React front-end and noSQL
 The application is deployed via Git on Heroku and can be found here: [Cabin Fever](https://cabin-fever.herokuapp.com).
 
 
-
 ### App overview
+At project initiation, we soon agreed that we would like to work with MapBox, a service which we had not covered during the course at General Assembly. From this came the idea to emulate Google Maps, but to add Cabins on the UK's southern coast.
 
-![image](https://user-images.githubusercontent.com/47919053/60401794-5bcf2f00-9b7e-11e9-8504-880e9d97015b.png)
+Our aim was to deliver an app that allowed a user to register, log in, add new cabins, and message existing cabin owners to book availablity. The model was similar to SpareRoom. There are two views available when searching for a cabin. 
 
-The application allows a user to search for a cocktail by single ingredient or name of the cocktail, returning the results under the search input.
+1. Map View
+![image](https://user-images.githubusercontent.com/47919053/60427936-b05ec280-9bef-11e9-86a4-2c64cbedc209.png)
 
-Clicking on a cocktail provides information on the ingredients and instructions on how to make the cocktail.
+2. List View.
+![image](https://user-images.githubusercontent.com/47919053/60428585-0c761680-9bf1-11e9-96d5-68ad28b18f3c.png)
 
-![image](https://user-images.githubusercontent.com/47919053/60401819-ba94a880-9b7e-11e9-8105-c92181ff54ba.png)
 
-Similar cocktails are displayed under each cocktail. This filter is based on the ingredients of the cocktail on display.
+Clicking on a cabin provides information including the location, images and even a function to message the cabin owner.
+
+![image](https://user-images.githubusercontent.com/47919053/60428788-96be7a80-9bf1-11e9-975b-94ad07a5a569.png)
+
 
 ### Development process
 
