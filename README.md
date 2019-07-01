@@ -1,30 +1,32 @@
-# GA-SEI-PROJECT-02
+# GA-SEI-PROJECT-03
 
-![image](https://user-images.githubusercontent.com/47919053/60401807-87eab000-9b7e-11e9-9604-59bbf35f3f41.png)
+![image](https://user-images.githubusercontent.com/47919053/60426600-e2225a00-9bec-11e9-88f1-3946013dd52b.png)
 
 # Timeframe
-1.5 days
+7 days
 
 # Technologies used
 * React
 * Webpack
+* MongoDB/Mongoose
+* Express
 * Ajax
 * JavaScript (ES6)
 * HTML5
 * Bulma (CSS framework)
 * SCSS
 * GitHub
+* React Select
+* ReactMapBox-GL
+* OpenCageData - location lookup
 
-## Cocktail DB API - React project
-This was a pair-coding, hackathon project with [Richard Yarwood](https://github.com/richyarwood) at General Assembly.
+## Cabin Fever - React project
 
-The brief was to:
-* Consume a publicly available API
-* Deliver the data back in a React app
+The brief was to build a full-stack application with a React front-end and noSQL database. The application had to include data schema and a RESTful api framework.
 
-The project consumes data from [CocktailDB API](https://www.thecocktaildb.com/api.php).
+The application is deployed via Git on Heroku and can be found here: Cabin Fever (https://cabin-fever.herokuapp.com/#/).
 
-The site can be run locally by cloning the repository and typing ```npm i``` and then ```npm run serve``` in the terminal.
+
 
 ### App overview
 
