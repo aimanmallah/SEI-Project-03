@@ -44,84 +44,9 @@ Clicking on a cabin provides information including the location, images and even
 ![image](https://user-images.githubusercontent.com/47919053/60428788-96be7a80-9bf1-11e9-975b-94ad07a5a569.png)
 
 
-### Development process
+#### The Code
 
-Three endpoints were chosen:
+The delivery of the cabins was incredibly fun because the data from the API was created by ourselves. The Cabin Model and Schema looked like so:
 
-* Filter by ingredient: https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Gin
-* Search by name: https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita
-* Random cocktail: https://www.thecocktaildb.com/api/json/v1/1/random.php
+![image](https://user-images.githubusercontent.com/47919053/60429253-9d99bd00-9bf2-11e9-9dc7-0a1cdfb040c3.png)
 
-The main page is rendered from four components ```Home.js```, ```NavBar.js```, ```RandomCocktail.js``` and ```CocktailIndex.js```.
-
-Choosing from the radio buttons (ingredient or name) sets a search variable which was appended to the api call. A ternary operator allowed us to refactor the code to a simple statement and ```scrollIntoView``` was used on submit to maximise the number of results on the page:
-
-```
-handleSubmit(e) {
-  e.preventDefault()
-  const endpoint = this.state.filter === 'ingredient' ? 'filter.php?i' : 'search.php?s'
-
-  axios.get(`https://www.thecocktaildb.com/api/json/v1/1/${endpoint}=${this.state.search.searchInput}`)
-    .then(res => this.setState({ data: res.data }))
-    .then(() => this.searchResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }))
-}
-```
-
-#### Cocktail detail page
-
-The delivery of the ingredients was a challenge because the data from the API was unstructured with many empty or null values, and the drinks and measures separated in to different key: value pairs.
-
-This was resolved by filtering the response data:
-
-```
-getData(){
-  axios.get('https://www.thecocktaildb.com/api/json/v1/1/lookup.php', {
-    params: {
-      i: this.props.match.params.id
-    }
-  })
-    .then(res => {
-      const data = res.data.drinks[0]
-
-      const drinks = Object.keys(data)
-        .filter(key => key.match(/ingredient/i))
-        .filter(key => !!data[key] || data[key] === ' ')
-        .map(key => data[key].trim())
-
-      const measures = Object.keys(data)
-        .filter(key => key.match(/measure/i))
-        .filter(key => !!data[key] || data[key] === ' ')
-        .map(key => data[key].trim())
-
-      const ingredients = drinks.map((drink, index) => {
-        return { drink: drinks[index], measure: measures[index] }
-      })
-
-      const cocktail = {
-        image: data.strDrinkThumb,
-        name: data.strDrink,
-        instructions: data.strInstructions,
-        glass: data.strGlass,
-        alcoholic: data.strAlcoholic,
-        category: data.strCategory,
-        id: data.idDrink,
-        ingredients
-      }
-
-      this.setState({ cocktail })
-    })
-}
-```
-
-##### Similar cocktails
-
-The similar cocktails component was created by randomly choosing an ingredient from the cocktail on show and using this ingredient to make another API call.
-
-```
-getData(){
-  const randomIngredient = this.props.ingredients[Math.floor(Math.random() * this.props.ingredients.length)]
-
-  axios.get('https://www.thecocktaildb.com/api/json/v1/1/filter.php', {
-    params: {
-      i: randomIngredient.drink
-    }
