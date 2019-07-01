@@ -1,125 +1,121 @@
-# SEI-Project-03
+# GA-SEI-PROJECT-02
 
-Members
-- Valeria
-- Charlotte Haylins
-- Aiman Mallah
+![image](https://user-images.githubusercontent.com/47919053/60401807-87eab000-9b7e-11e9-9604-59bbf35f3f41.png)
 
-Project-03 - Cabin Fever
+# Timeframe
+1.5 days
 
-Timeframe
-7 days
+# Technologies used
+* React
+* Webpack
+* Ajax
+* JavaScript (ES6)
+* HTML5
+* Bulma (CSS framework)
+* SCSS
+* GitHub
 
-Technologies used
-React
-Webpack
-Ajax
-JavaScript (ES6)
-Python
-PostgreSQL
-Flask
-HTML5
-Bulma (CSS framework)
-SCSS
-GitHub
-Project Brief
-This was a sole-coding project and the final project for the software engineering immersive course.
+## Cocktail DB API - React project
+This was a pair-coding, hackathon project with [Richard Yarwood](https://github.com/richyarwood) at General Assembly.
 
 The brief was to:
+* Consume a publicly available API
+* Deliver the data back in a React app
 
-Create an application with a Python/Flask/PostgreSQL backend and a React front-end utilising Webpack.
-The application had to include APIs to enable a user to register, login and add content.
-The site is deployed to Heroku at http://upcyclestore.herokuapp.com.
+The project consumes data from [CocktailDB API](https://www.thecocktaildb.com/api.php).
 
-image
+The site can be run locally by cloning the repository and typing ```npm i``` and then ```npm run serve``` in the terminal.
 
-App overview
-I had decided early on in my project planning that I wanted to build a store. After researching for inspiration, I thought it would be fun to combine the creativity of giving old things a new lease of life with a shop. Upcycle Store was born.
+### App overview
 
-I realised that to build a complete ecommerce platform was a challenging task in just 7 days. I decided that my MVP was a platform which allowed a user to register, list their items and also simulate buying items through a cart.
+![image](https://user-images.githubusercontent.com/47919053/60401794-5bcf2f00-9b7e-11e9-8504-880e9d97015b.png)
 
-Development process and application highlights
-The project started with an entity relationship diagram (ERD) and I used Sketch and Zeplin to wireframe and design.
+The application allows a user to search for a cocktail by single ingredient or name of the cocktail, returning the results under the search input.
 
-The site has a Python/PostgreSQL backend and a React front end. Based on the ERD and wireframes I built the data models and used Flask to provide the API framework. Before building the front end I tested the API endpoints using Insomnia.
+Clicking on a cocktail provides information on the ingredients and instructions on how to make the cocktail.
 
-The shopping cart items had a one-to-many relationship with both the user and the listings. This caused a number of issues with recursion, but this was resolved by excluding data within some endpoints.
+![image](https://user-images.githubusercontent.com/47919053/60401819-ba94a880-9b7e-11e9-8105-c92181ff54ba.png)
 
-API endpoints
-Endpoints were built out for:
+Similar cocktails are displayed under each cocktail. This filter is based on the ingredients of the cocktail on display.
 
-Login and registration (POST)
-Categories (POST)- fixed number from a seeds file.
-Listings - (GET, POST, DELETE)
-Cart items - (GET, POST, DELETE)
-The endpoints for the cart items were more complex as I needed to retrieve all items for a user:
+### Development process
 
-@router.route('/cart', methods=['GET'])
-@db_session
-@secure_route
-def get_cart():
+Three endpoints were chosen:
 
-    schema = CartItemSchema(many=True)
-    usercart = CartItem.select(lambda user: user.user == g.current_user)
+* Filter by ingredient: https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Gin
+* Search by name: https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita
+* Random cocktail: https://www.thecocktaildb.com/api/json/v1/1/random.php
 
-    return schema.dumps(usercart)
-In addition. To simulate a 'checkout', I implemented an endpoint which removes all cart items for a user:
+The main page is rendered from four components ```Home.js```, ```NavBar.js```, ```RandomCocktail.js``` and ```CocktailIndex.js```.
 
-@router.route('/cart_checkout', methods=['DELETE'])
-@db_session
-@secure_route
-def clear_cart():
-    delete(item for item in CartItem if item.user == g.current_user)
-    return '', 204
-Add a listings
-Whilst this is a simple form submission to the listing POST endpoint, I needed to store the categories as an array of ids. This is achieved by setting state for the categories and the rest of the form separately, and spreading this data in to one state before submission:
+Choosing from the radio buttons (ingredient or name) sets a search variable which was appended to the api call. A ternary operator allowed us to refactor the code to a simple statement and ```scrollIntoView``` was used on submit to maximise the number of results on the page:
 
-// HANDLES STATE CHANGE FOR FORM INPUT EXCEPT CATEGORIES ======
-handleChange(e){
-  const data = { ...this.state.data, [e.target.name]: e.target.value }
-  this.setState({ data })
+```
+handleSubmit(e) {
+  e.preventDefault()
+  const endpoint = this.state.filter === 'ingredient' ? 'filter.php?i' : 'search.php?s'
+
+  axios.get(`https://www.thecocktaildb.com/api/json/v1/1/${endpoint}=${this.state.search.searchInput}`)
+    .then(res => this.setState({ data: res.data }))
+    .then(() => this.searchResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }))
 }
+```
 
+#### Cocktail detail page
 
-// HANDLES THE CATEGORY MULTISELECT ============================
-handleCategorySelect(e){
-  const categoryIds = Array.from(new Set([
-    ...this.state.data.category_ids,
-    parseInt(e.target.value)
-  ]))
-  const data = { ...this.state.data, category_ids: categoryIds }
-  this.setState({ data })
-}
-Browse all listings filter
-image
+The delivery of the ingredients was a challenge because the data from the API was unstructured with many empty or null values, and the drinks and measures separated in to different key: value pairs.
 
-The browse page includes filter buttons. These are sorted first:
+This was resolved by filtering the response data:
 
-sortedCategories() {
-  return this.state.categories.sort((a, b) => {
-    if (a.name === b.name) return 0
-    return a.name < b.name ? -1 : 1
+```
+getData(){
+  axios.get('https://www.thecocktaildb.com/api/json/v1/1/lookup.php', {
+    params: {
+      i: this.props.match.params.id
+    }
   })
-}
-And a filter function is used to toggle the content:
+    .then(res => {
+      const data = res.data.drinks[0]
 
-filteredListings() {
-  const filter = this.state.filters.name
-  if (this.state.filters.name === 'All') return this.sortedListings()
-  return this.sortedListings().filter(category => {
-    return category.categories.some(category => category.name === filter)
-  })
-}
+      const drinks = Object.keys(data)
+        .filter(key => key.match(/ingredient/i))
+        .filter(key => !!data[key] || data[key] === ' ')
+        .map(key => data[key].trim())
 
-<section className="columns is-multiline">
-  {this.filteredListings().map(listing =>
-    <div key={listing.id} className="listing-wrapper column is-one-quarter">
-      <ListingCard {...listing} />
-    </div>
-  )}
-</section>
-Future enhancements
-PayPal integration
-Search
-Add comments to listings
-Update endpoint for a listing
+      const measures = Object.keys(data)
+        .filter(key => key.match(/measure/i))
+        .filter(key => !!data[key] || data[key] === ' ')
+        .map(key => data[key].trim())
+
+      const ingredients = drinks.map((drink, index) => {
+        return { drink: drinks[index], measure: measures[index] }
+      })
+
+      const cocktail = {
+        image: data.strDrinkThumb,
+        name: data.strDrink,
+        instructions: data.strInstructions,
+        glass: data.strGlass,
+        alcoholic: data.strAlcoholic,
+        category: data.strCategory,
+        id: data.idDrink,
+        ingredients
+      }
+
+      this.setState({ cocktail })
+    })
+}
+```
+
+##### Similar cocktails
+
+The similar cocktails component was created by randomly choosing an ingredient from the cocktail on show and using this ingredient to make another API call.
+
+```
+getData(){
+  const randomIngredient = this.props.ingredients[Math.floor(Math.random() * this.props.ingredients.length)]
+
+  axios.get('https://www.thecocktaildb.com/api/json/v1/1/filter.php', {
+    params: {
+      i: randomIngredient.drink
+    }
